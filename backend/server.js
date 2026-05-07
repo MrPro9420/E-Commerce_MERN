@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from 'cors';
 import DBconnect from './config/db.js'
 import authRoutes from './routes/auth.routes.js'
+import productRoutes from "./routes/product.routes.js";
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 //routes
+app.use('/api/product',productRoutes)
 app.use('/api/auth', authRoutes);
 app.get('/', (req, res) => {
     res.status(200).send('API is running');
