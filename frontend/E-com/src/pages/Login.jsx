@@ -1,71 +1,81 @@
 import { useState } from "react";
-import {useNavigate} from 'react-router';
-import api from '../api/axios';
+import { useNavigate } from "react-router";
+import api from "../api/axios";
 
-export default function Login(){
-    const [form , setForm] = useState({
-        email : "",
-        password : ""
+export default function Login() {
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+  const [msg, setMsg] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
     });
-    const [msg , setMsg] = useState("");
+  };
 
-    const navigate  = useNavigate();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.post("/auth/login", form);
+      console.log(response.data);
+      // save token to local storage
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("userId", response.data.user.id);
+      //display msg and go to home pagex
+      setMsg(response.data.message);
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
+    } catch (error) {
+      setMsg(error.response?.data?.message || "An error occurred");
+    }
+  };
 
-    const handleChange = (e) =>{
-        setForm({
-        ...form,
-        [e.target.name]:e.target.value
-        })
-    };
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
+        <h2 className="text-2xl font-bold mb-6 text-center">Login Account</h2>
+        {msg && (
+          <div className="mb-4 text-center text-sm text-blue-600 font-medium">
+            {msg}
+          </div>
+        )}
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await api.post("/auth/login",form);
-            // save token to local storage 
-            localStorage.setItem("token",response.data.token);
-            //display msg and go to home pagex
-            setMsg(response.data.message);
-            setTimeout(()=>{
-                navigate("/");
-            },1000)
-        } catch (error) {
-            setMsg(error.response?.data?.message || "An error occurred");     
-        }
-    } 
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            name="email"
+            placeholder="Enter Email"
+            value={form.email}
+            onChange={(e) => {
+              handleChange(e);
+            }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focuse:outline-none focuse:ring-2 focuse:ring-blue-500"
+            required
+          />
+          <input
+            name="password"
+            placeholder="Enter Password"
+            value={form.password}
+            onChange={(e) => {
+              handleChange(e);
+            }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focuse:outline-none focuse:ring-2 focuse:ring-blue-500"
+            required
+          />
 
-    return(
-        <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
-            <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
-                <h2 className="text-2xl font-bold mb-6 text-center">Login Account</h2>
-                {msg && (<div className="mb-4 text-center text-sm text-blue-600 font-medium">
-                    {msg}
-                </div>)}
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                     <input
-                    name="email"
-                    placeholder="Enter Email"
-                    value={form.email}
-                    onChange={(e)=>{handleChange(e)}}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focuse:outline-none focuse:ring-2 focuse:ring-blue-500"
-                    required/>
-                    <input
-                    name="password"
-                    placeholder="Enter Password"
-                    value={form.password}
-                    onChange={(e)=>{handleChange(e)}}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focuse:outline-none focuse:ring-2 focuse:ring-blue-500"
-                    required/>
-
-                    <button 
-                    type="submit"
-                    className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors">
-                        Login
-                    </button>
-
-                </form>
-            </div>
-        </div>
-    )
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
+          >
+            Login
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }
