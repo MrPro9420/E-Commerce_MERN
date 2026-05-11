@@ -2,16 +2,19 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from "react";
 import api from "../api/axios";
+import { Trash2 } from "lucide-react";
+import { useNavigate } from "react-router";
 
 const Cart = () => {
   const userId = localStorage.getItem("userId");
   const [cart, setCart] = useState(null);
+  const navigate = useNavigate();
 
   const loadCart = async () => {
     if (!userId) return setCart(null);
     try {
       const response = await api.post(`/cart/${userId}`);
-      setCart(response.data);
+      setCart(response.data.cart);
     } catch (error) {
       console.error("Error fetching cart:", error);
       setCart(null);
@@ -33,7 +36,7 @@ const Cart = () => {
   };
 
   const updateQuantity = async (productId, quantity) => {
-    if (quantity === 1) {
+    if (quantity === 0) {
       return removeItem(productId);
     }
     try {
@@ -54,15 +57,23 @@ const Cart = () => {
   );
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-3xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
       {cart.items.length === 0 ? (
         <p>Your cart is empty.</p>
       ) : (
         <div>
           {cart.items.map((item) => (
-            <div key={item.productId._id} className="border-b py-4">
-              <h2 className="text-lg font-semibold">{item.productId.name}</h2>
+            <div
+              key={item.productId._id}
+              className="border py-4 px-6 mb-4 rounded-lg flex  items-center gap-8"
+            >
+              <h2 className="text-lg font-semibold">{item.productId.title}</h2>
+              <img
+                src={item.productId.imageUrl}
+                alt={item.productId.title}
+                className="w-32 h-32 object-cover my-2"
+              />
               <p className="text-gray-600">
                 ${item.productId.price.toFixed(2)}
               </p>
@@ -84,6 +95,13 @@ const Cart = () => {
                 >
                   +
                 </button>
+                <button
+                  onClick={() => removeItem(item.productId._id)}
+                  className="inline-flex items-center gap-2 px-4 py-2 border border-red-500 text-red-500 rounded-md font-medium transition-colors duration-200 hover:bg-red-500 hover:text-white"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Remove
+                </button>
               </div>
             </div>
           ))}
@@ -92,6 +110,12 @@ const Cart = () => {
               Total: ${totalPrice.toFixed(2)}
             </h2>
           </div>
+          <button
+            onClick={() => navigate("/checkout")}
+            className="w-full  text-white bg-blue-500  my-2 p-2 rounded"
+          >
+            Proceed to checkout
+          </button>
         </div>
       )}
     </div>

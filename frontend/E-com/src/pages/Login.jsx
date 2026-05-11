@@ -22,15 +22,16 @@ export default function Login() {
     e.preventDefault();
     try {
       const response = await api.post("/auth/login", form);
-      console.log(response.data);
+      // console.log(response.data);
       // save token to local storage
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("userId", response.data.user.id);
       //display msg and go to home pagex
       setMsg(response.data.message);
+      window.dispatchEvent(new Event("authChanged"));
       setTimeout(() => {
         navigate("/");
-      }, 1000);
+      }, 500);
     } catch (error) {
       setMsg(error.response?.data?.message || "An error occurred");
     }

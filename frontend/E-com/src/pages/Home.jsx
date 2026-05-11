@@ -4,7 +4,7 @@ import { Link } from "react-router";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
-  console.log(products);
+  // console.log(products);
   const [searchTerm, setSearchTerm] = useState("");
   const [categories, setCategories] = useState("");
 
@@ -39,6 +39,7 @@ const Home = () => {
       );
       localStorage.setItem("cartCount", totalItems);
       window.dispatchEvent(new Event("cartUpdated"));
+      alert("Item added to cart!! ");
     } catch (error) {
       console.error("Error adding to cart:", error);
     }
@@ -70,8 +71,11 @@ const Home = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
         {products.map((product) => (
-          <div className="border border-gray-300 rounded p-4 hover:shadow-lg transition-shadow">
-            <Link to={`/product/${product._id}`} key={product._id}>
+          <div
+            key={product._id}
+            className="border border-gray-300 rounded p-4 hover:shadow-lg transition-shadow"
+          >
+            <Link to={`/product/${product._id}`}>
               <img
                 src={product.imageUrl}
                 alt={product.title}
