@@ -76,7 +76,7 @@ export const getCartById = async (req, res) => {
     const { userId } = req.params;
     const cart = await Cart.findOne({ userId }).populate(
       "items.productId",
-      "title price imageUrl",
+      "title price imageUrl stock",
     );
 
     if (!cart) {

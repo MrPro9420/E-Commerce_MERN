@@ -25,14 +25,18 @@ const Navbar = () => {
 
       try {
         const response = await api.post(`/cart/${userId}`);
-        setCartCount(
-          response.data.cart.items.reduce(
-            (acc, item) => acc + item.quantity,
-            0,
-          ),
-        );
+        if (response.status === 200) {
+          setCartCount(
+            response.data.cart.items.reduce(
+              (acc, item) => acc + item.quantity,
+              0,
+            ),
+          );
+        } else {
+          setCartCount(0);
+        }
       } catch (error) {
-        console.error("Error loading cart:", error);
+        console.log("Error loading cart:", error);
       }
     };
     loadcart();
@@ -40,7 +44,8 @@ const Navbar = () => {
     return () => {
       window.removeEventListener("cartUpdated", loadcart);
     };
-  }, [cartCount, userId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const logout = () => {
     localStorage.clear();
@@ -113,8 +118,22 @@ const Navbar = () => {
             </Link>
           </>
         ) : (
-          <button
-            className="  inline-block
+          <>
+            <button
+              className="  inline-block       
+    px-4 py-2  rounded-md
+    border border-gray-500
+      transition-colors duration-200
+    hover:bg-grey-800
+    hover:text-white
+    text-gray-500
+    font-medium"
+              onClick={() => navigate("/myorders/")}
+            >
+              MyOrders
+            </button>
+            <button
+              className="  inline-block
     px-4 py-2
     border border-gray-500
     text-gray-500
@@ -123,10 +142,11 @@ const Navbar = () => {
     transition-colors duration-200
     hover:bg-red-500
     hover:text-white"
-            onClick={logout}
-          >
-            Logout
-          </button>
+              onClick={logout}
+            >
+              Logout
+            </button>
+          </>
         )}
       </div>
     </nav>

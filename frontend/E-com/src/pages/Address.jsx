@@ -24,9 +24,21 @@ const Address = () => {
 
   const saveAddress = async (e) => {
     e.preventDefault();
+    if (
+      !form.fullname ||
+      !form.phone ||
+      !form.addressline ||
+      !form.city ||
+      !form.state ||
+      !form.pincode ||
+      !form.country
+    ) {
+      alert("Please fill all fields");
+      return;
+    }
     try {
       await api.post("/address/add", { ...form, userId });
-      navigate("/payment");
+      navigate("/checkout");
     } catch (error) {
       console.error("Error saving address:", error);
     }
@@ -44,6 +56,7 @@ const Address = () => {
             value={form[key]}
             onChange={handleChange}
             className=" w-full p-2 border border-gray-500 rounded mb-4"
+            required
           />
         ))}
         <button
