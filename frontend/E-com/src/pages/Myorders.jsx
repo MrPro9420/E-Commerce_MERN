@@ -16,6 +16,7 @@ const Myorders = () => {
       }
     };
     loadOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orders]);
 
   if (orders.length === 0) {

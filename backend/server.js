@@ -25,7 +25,12 @@ app.get("/", (req, res) => {
   res.status(200).send("API is running");
 });
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT;
+
+if (!PORT) {
+  console.error("Error: PORT environment variable is not defined.");
+  process.exit(1);
+}
 
 DBconnect();
 
